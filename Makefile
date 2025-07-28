@@ -3,10 +3,6 @@ ALL_GO_FILES := $(shell \
 	find . -type f -name '*.go' \
 	| sort)
 
-ALL_PHP_FILES := $(shell \
-	find . -type f -name '*.php' \
-	| sort)
-
 ALL_PYTHON_FILES := $(shell \
 	find . -type f -name '*.py' \
 	| sort)
@@ -27,7 +23,7 @@ ALL_JAVA_FILES := $(shell \
 	find . -type f -name '*.java' \
 	| sort)
 
-ALL_SOURCE_FILES := $(ALL_GO_FILES) $(ALL_PHP_FILES) $(ALL_PYTHON_FILES) $(ALL_REACT_FILES) $(ALL_BALLERINA_FILES) $(ALL_RUBY_FILES) $(ALL_JAVA_FILES)
+ALL_SOURCE_FILES := $(ALL_GO_FILES) $(ALL_PYTHON_FILES) $(ALL_REACT_FILES) $(ALL_BALLERINA_FILES) $(ALL_RUBY_FILES) $(ALL_JAVA_FILES)
 
 # Path to your tool (update if different)
 LICENSE_TOOL := go run ./licenser/main.go
