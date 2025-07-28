@@ -1,3 +1,6 @@
+# Copyright 2025 The OpenChoreo Authors
+# SPDX-License-Identifier: Apache-2.0
+
 from flask import Flask, jsonify, request
 
 app = Flask(__name__)
