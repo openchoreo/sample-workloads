@@ -22,4 +22,4 @@ endpoints:
     # +optional The path to the schema definition file
     # This is applicable to REST, GraphQL, and gRPC endpoint types
     # The path should be relative to the workload.yaml file location
-    schemaFilePath: docs/openapi.yaml
+    schemaFile: docs/openapi.yaml
