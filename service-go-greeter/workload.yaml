@@ -1,28 +1,25 @@
+# OpenChoreo Workload Descriptor
+# This file defines how your workload exposes endpoints and connects to other services.
+# It sits alongside your source code and gets converted to a Workload Custom Resource (CR).
 apiVersion: openchoreo.dev/v1alpha1
+
+# Basic metadata for the workload
 metadata:
+  # +required Name of the workload
   name: go-greeter-service
+
 # +optional Incoming connection details for the component
+# Endpoints define the network interfaces that this workload exposes to other services
 endpoints:
-  # +required Unique name for the endpoint.
-  # This name will be used when generating the managed API
-  - name: go_greeter_api
-    # +optional Display name for the endpoint.
-    displayName: Go Greeter
-    # +required Service section has the user service endpoint details
-    service:
-      # +optional Base path of the API that gets exposed via the endpoint.
-      # This is mandatory if the endpoint type is set to REST or GraphQL.
-      basePath: /greeter
-      # +required Numeric port value that gets exposed via the endpoint
-      port: 9090
-    # +required Type of traffic that the endpoint is accepting.
-    # Allowed values: REST, GraphQL, GRPC, TCP, UDP.
+  - # +required Unique name for the endpoint
+    # This name will be used when generating the managed API and as the key in the CR map
+    name: go_greeter_api
+    # +required Numeric port value that gets exposed via the endpoint
+    port: 9090
+    # +required Type of traffic that the endpoint is accepting
+    # Allowed values: REST, GraphQL, gRPC, TCP, UDP, HTTP, Websocket
     type: REST
-    # +optional Network level visibilities of the endpoint.
-    # Accepted values: Project|Organization|Public(Default).
-    networkVisibilities:
-      - Public
-    # +optional The path to the schema definition file.
-    # This is only applicable to REST endpoint types.
-    # The path should be relative to the docker context.
+    # +optional The path to the schema definition file
+    # This is applicable to REST, GraphQL, and gRPC endpoint types
+    # The path should be relative to the workload.yaml file location
     schemaFilePath: openapi.yaml

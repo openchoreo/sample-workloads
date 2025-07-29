@@ -1,21 +1,21 @@
+# OpenChoreo Workload Descriptor
+# This file defines how your workload exposes endpoints and connects to other services.
+# It sits alongside your source code and gets converted to a Workload Custom Resource (CR).
 apiVersion: openchoreo.dev/v1alpha1
+
+# Basic metadata for the workload
 metadata:
-  name: hello-world-php-webapp
+  # +required Name of the workload
+  name: react-nginx-webapp
+
 # +optional Incoming connection details for the component
+# Endpoints define the network interfaces that this workload exposes to other services
 endpoints:
-  # +required Unique name for the endpoint.
-  # This name will be used when generating the managed API
-  - name: webapp-endpoint
-    # +optional Display name for the endpoint.
-    displayName: Hello World PHP Web App Endpoint
-    # +required Service section has the user service endpoint details
-    service:
-      # +required Numeric port value that gets exposed via the endpoint
-      port: 8080
-    # +required Type of traffic that the endpoint is accepting.
-    # Allowed values: REST, GraphQL, GRPC, TCP, UDP.
-    type: TCP
-    # +optional Network level visibilities of the endpoint.
-    # Accepted values: Project|Organization|Public(Default).
-    networkVisibilities:
-      - Public
+  - # +required Unique name for the endpoint
+    # This name will be used when generating the managed API and as the key in the CR map
+    name: webapp-endpoint
+    # +required Numeric port value that gets exposed via the endpoint
+    port: 8080
+    # +required Type of traffic that the endpoint is accepting
+    # Allowed values: REST, GraphQL, gRPC, TCP, UDP, HTTP, Websocket
+    type: HTTP
