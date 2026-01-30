@@ -6,7 +6,7 @@ apiVersion: openchoreo.dev/v1alpha1
 # Basic metadata for the workload
 metadata:
   # +required Name of the workload
-  name: php-hello-world-webapp
+  name: php-task-manager-webapp
 
 # +optional Incoming connection details for the component
 # Endpoints define the network interfaces that this workload exposes to other services
