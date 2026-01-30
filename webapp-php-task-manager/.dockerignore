@@ -1,0 +1,22 @@
+# Git files
+.git
+.gitignore
+
+# Documentation
+README.md
+*.md
+
+# Kubernetes/Deployment files
+workload.yaml
+*.yaml
+*.yml
+
+# IDE files
+.idea
+.vscode
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
