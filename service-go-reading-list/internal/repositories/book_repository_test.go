@@ -8,7 +8,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/wso2/choreo-sample-apps/go/rest-api/internal/models"
+	"github.com/openchoreo/sample-workloads/service-go-reading-list/internal/models"
 )
 
 func TestBookRepository(t *testing.T) {

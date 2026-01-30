@@ -10,7 +10,7 @@ import (
 
 	"github.com/google/uuid"
 
-	"github.com/wso2/choreo-sample-apps/go/rest-api/internal/models"
+	"github.com/openchoreo/sample-workloads/service-go-reading-list/internal/models"
 )
 
 type bookRepository struct {

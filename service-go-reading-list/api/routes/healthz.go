@@ -8,7 +8,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 
-	"github.com/wso2/choreo-sample-apps/go/rest-api/internal/config"
+	"github.com/openchoreo/sample-workloads/service-go-reading-list/internal/config"
 )
 
 func HandleHealthCheckRequest(ctx *fiber.Ctx) error {

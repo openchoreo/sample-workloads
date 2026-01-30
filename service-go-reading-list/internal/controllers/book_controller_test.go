@@ -11,8 +11,8 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/stretchr/testify/assert"
-	"github.com/wso2/choreo-sample-apps/go/rest-api/internal/models"
-	"github.com/wso2/choreo-sample-apps/go/rest-api/internal/repositories"
+	"github.com/openchoreo/sample-workloads/service-go-reading-list/internal/models"
+	"github.com/openchoreo/sample-workloads/service-go-reading-list/internal/repositories"
 )
 
 // MockBookRepository is a mock implementation of the models.BookRepository interface for testing purposes.

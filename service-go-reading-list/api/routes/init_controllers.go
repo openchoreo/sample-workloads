@@ -4,9 +4,9 @@
 package routes
 
 import (
-	"github.com/wso2/choreo-sample-apps/go/rest-api/internal/config"
-	"github.com/wso2/choreo-sample-apps/go/rest-api/internal/controllers"
-	"github.com/wso2/choreo-sample-apps/go/rest-api/internal/repositories"
+	"github.com/openchoreo/sample-workloads/service-go-reading-list/internal/config"
+	"github.com/openchoreo/sample-workloads/service-go-reading-list/internal/controllers"
+	"github.com/openchoreo/sample-workloads/service-go-reading-list/internal/repositories"
 )
 
 var bookController *controllers.BookController
