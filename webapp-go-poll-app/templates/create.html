@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Poll</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 600px;
+            padding: 40px;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2em;
+        }
+        .form-group {
+            margin-bottom: 25px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .options-container {
+            margin-top: 10px;
+        }
+        .option-input {
+            margin-bottom: 10px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .option-input span {
+            color: #666;
+            font-weight: bold;
+            min-width: 80px;
+        }
+        .add-option-btn {
+            background: #27ae60;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background 0.3s;
+        }
+        .add-option-btn:hover {
+            background: #229954;
+        }
+        .remove-option-btn {
+            background: #e74c3c;
+            color: white;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.85em;
+        }
+        .remove-option-btn:hover {
+            background: #c0392b;
+        }
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+        }
+        button[type="submit"] {
+            flex: 1;
+            padding: 15px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+        button[type="submit"]:hover {
+            background: #5568d3;
+        }
+        .back-btn {
+            padding: 15px 25px;
+            background: #95a5a6;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            text-decoration: none;
+            display: inline-block;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background 0.3s;
+        }
+        .back-btn:hover {
+            background: #7f8c8d;
+        }
+        .hint {
+            color: #999;
+            font-size: 0.85em;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Create New Poll</h1>
+        <form method="POST" action="/create" id="pollForm">
+            <div class="form-group">
+                <label for="question">Poll Question</label>
+                <input type="text" id="question" name="question" required placeholder="What would you like to ask?">
+            </div>
+
+            <div class="form-group">
+                <label>Answer Options</label>
+                <div class="hint">Add at least 2 options for your poll</div>
+                <div class="options-container" id="optionsContainer">
+                    <div class="option-input">
+                        <span>Option 1:</span>
+                        <input type="text" name="options" required placeholder="Enter option">
+                    </div>
+                    <div class="option-input">
+                        <span>Option 2:</span>
+                        <input type="text" name="options" required placeholder="Enter option">
+                    </div>
+                </div>
+                <button type="button" class="add-option-btn" onclick="addOption()">+ Add Another Option</button>
+            </div>
+
+            <div class="button-group">
+                <a href="/" class="back-btn">Cancel</a>
+                <button type="submit">Create Poll</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        let optionCount = 2;
+
+        function addOption() {
+            optionCount++;
+            const container = document.getElementById('optionsContainer');
+            const div = document.createElement('div');
+            div.className = 'option-input';
+            div.innerHTML = `
+                <span>Option ${optionCount}:</span>
+                <input type="text" name="options" placeholder="Enter option">
+                <button type="button" class="remove-option-btn" onclick="removeOption(this)">Remove</button>
+            `;
+            container.appendChild(div);
+        }
+
+        function removeOption(btn) {
+            const container = document.getElementById('optionsContainer');
+            if (container.children.length > 2) {
+                btn.parentElement.remove();
+                updateOptionNumbers();
+            }
+        }
+
+        function updateOptionNumbers() {
+            const options = document.querySelectorAll('.option-input');
+            options.forEach((opt, index) => {
+                opt.querySelector('span').textContent = `Option ${index + 1}:`;
+            });
+            optionCount = options.length;
+        }
+    </script>
+</body>
+</html>
