@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.Poll.Question}}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        .poll-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 40px;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 2em;
+        }
+        .meta {
+            color: #666;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        .total-votes {
+            display: inline-block;
+            background: #f0f0f0;
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        .voting-form {
+            margin-bottom: 30px;
+        }
+        .option-item {
+            background: #f8f9fa;
+            padding: 15px;
+            margin-bottom: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+        .option-item:hover {
+            background: #e9ecef;
+            border-color: #667eea;
+        }
+        .option-item input[type="radio"] {
+            margin-right: 10px;
+        }
+        .option-item label {
+            cursor: pointer;
+            font-size: 1.1em;
+        }
+        .vote-btn {
+            width: 100%;
+            padding: 15px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            transition: background 0.3s;
+            margin-top: 10px;
+        }
+        .vote-btn:hover {
+            background: #5568d3;
+        }
+        .vote-btn:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+        }
+        .results {
+            margin-top: 30px;
+        }
+        .result-item {
+            margin-bottom: 20px;
+        }
+        .result-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        .option-name {
+            color: #333;
+        }
+        .vote-count {
+            color: #667eea;
+        }
+        .progress-bar {
+            background: #e0e0e0;
+            border-radius: 10px;
+            height: 30px;
+            overflow: hidden;
+            position: relative;
+        }
+        .progress-fill {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            height: 100%;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 10px;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+        .progress-fill.low {
+            justify-content: flex-start;
+            padding-left: 10px;
+            padding-right: 0;
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 12px 25px;
+            background: #95a5a6;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: background 0.3s;
+        }
+        .back-link:hover {
+            background: #7f8c8d;
+        }
+        .voted-message {
+            background: #d4edda;
+            border: 2px solid #c3e6cb;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        .server-info {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            font-size: 0.9em;
+            color: #666;
+        }
+        .server-info strong {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="poll-card">
+            <h1>{{.Poll.Question}}</h1>
+            <div class="meta">
+                <div>Created: {{.Poll.CreatedAt.Format "January 02, 2006 at 15:04"}}</div>
+                <div class="total-votes">Total Votes: {{getTotalVotes .Poll}}</div>
+            </div>
+
+            {{if .Voted}}
+            <div class="voted-message">
+                ✓ You've already voted on this poll. Here are the results:
+            </div>
+            {{else}}
+            <form method="POST" action="/vote/{{.Poll.ID}}" class="voting-form">
+                {{range .Poll.Options}}
+                <div class="option-item">
+                    <input type="radio" id="{{.}}" name="option" value="{{.}}" required>
+                    <label for="{{.}}">{{.}}</label>
+                </div>
+                {{end}}
+                <button type="submit" class="vote-btn">Cast Your Vote</button>
+            </form>
+            {{end}}
+
+            <div class="results">
+                <h2>Results</h2>
+                {{$totalVotes := getTotalVotes .Poll}}
+                {{range $option := .Poll.Options}}
+                    {{$votes := index $.Poll.Votes $option}}
+                    {{$percentage := getPercentage $votes $totalVotes}}
+                <div class="result-item">
+                    <div class="result-label">
+                        <span class="option-name">{{$option}}</span>
+                        <span class="vote-count">{{$votes}} votes ({{printf "%.1f" $percentage}}%)</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill {{if lt $percentage 10.0}}low{{end}}" style="width: {{$percentage}}%">
+                            {{if ge $percentage 10.0}}{{printf "%.1f" $percentage}}%{{end}}
+                        </div>
+                    </div>
+                </div>
+                {{end}}
+            </div>
+
+            <a href="/" class="back-link">← Back to All Polls</a>
+
+            <div class="server-info">
+                <strong>Server Information:</strong><br>
+                Poll ID: {{.Poll.ID}}<br>
+                Total Options: {{len .Poll.Options}}<br>
+                Session Status: {{if .Voted}}Voted{{else}}Not Voted{{end}}
+            </div>
+        </div>
+    </div>
+</body>
+</html>
