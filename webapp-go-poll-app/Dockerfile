@@ -33,8 +33,11 @@ COPY --from=builder /build/webapp .
 # Copy templates and static files
 COPY templates/ templates/
 
-# Expose port 8080
-EXPOSE 8080
+# Set the port environment variable
+ENV PORT=80
+
+# Expose port 80
+EXPOSE 80
 
 # Run the application
 CMD ["./webapp"]
