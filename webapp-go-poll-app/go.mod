@@ -1,4 +1,4 @@
-module webapp-go-poll
+module github.com/openchoreo/sample-workloads/webapp-go-poll-app
 
 go 1.21
 

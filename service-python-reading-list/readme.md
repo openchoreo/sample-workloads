@@ -1,40 +1,189 @@
-# Choreo Sample Python REST API - Reading List
+# Python Reading List REST API
 
-## Repository File Structure
+A REST API service for managing a reading list of books, built with Python Flask. This service demonstrates CRUD operations with in-memory storage.
 
-The below table gives a brief overview of the important files in the service.\
-Note: The following file paths are relative to the path /python/rest-api/
+## Features
 
-| Filepath               | Description                                                                                                                                                  |
-| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| app.py                 | The Python based service code.                                                                                                                               |
-| Dockerfile             | Choreo uses the Dockerfile to build the container image of the application.                                                                                  |
-| .choreo/endpoints.yaml | Choreo-specific configuration that provides information about how Choreo exposes the service.                                                                |
-| openapi.yaml           | OpenAPI contract of the service. This is needed to publish our service as a managed API. This openapi.yaml file is referenced by the .choreo/endpoints.yaml. |
+- **Book Management**: Create, read, update, and delete books
+- **Reading Status**: Track books with status (e.g., "to_read", "reading", "read")
+- **In-Memory Storage**: Fast, lightweight data storage
+- **OpenAPI Specification**: Complete API documentation
+- **Unit Tests**: Comprehensive test coverage
 
-## Deploy Application
+## Deploy in OpenChoreo
 
-Please refer to the Choreo documentation under the [Develop a REST API](https://wso2.com/choreo/docs/develop-components/develop-services/develop-a-rest-api/#step-1-create-a-service-component-from-a-dockerfile) section to learn how to deploy the application.
+Follow these steps to deploy the application in OpenChoreo:
 
-### Use the following configuration when creating this component in Choreo:
+### 1. Create a Component
+- Set up OpenChoreo following the instructions at https://openchoreo.dev
+- Open the Backstage UI and navigate to **Create**
+- Select **Component Type: Service**
+- After creation, navigate to the **Workflows** tab to view builds
 
-- Build Preset: **Dockerfile**
-- Dockerfile Path: `python-reading-list-rest-api/Dockerfile`
-- Docker Context Path: `python-reading-list-rest-api`
+### 2. Build and Deploy
+- Once the build completes successfully, go to the **Deploy** tab
+- Click **Deploy** to deploy the service to your environment
 
-The [endpoints.yaml](.choreo/endpoints.yaml) file contains the endpoint configurations that are used by the Choreo to expose the service.
+### 3. Test the Service
+Navigate to the **Test** section in the left menu and use the OpenAPI Console to test the service endpoints.
 
-## Execute the Sample Locally
+## API Endpoints
 
-Navigate to the Python application directory
+Base path: `/reading-list`
 
-```bash
-cd choreo-samples/python-reading-list-rest-api
+### List All Books
+
+**Endpoint:** `GET /reading-list/books`
+
+**Response:**
+```json
+{
+  "books": [
+    {
+      "id": 1,
+      "name": "The Lord of the Rings",
+      "author": "J. R. R. Tolkien",
+      "status": "to_read"
+    },
+    {
+      "id": 2,
+      "name": "Harry Potter",
+      "author": "J. K. Rowling",
+      "status": "reading"
+    }
+  ]
+}
 ```
 
-Run the service
+### Add a New Book
+
+**Endpoint:** `POST /reading-list/books`
+
+**Request Body:**
+```json
+{
+  "name": "The Hobbit",
+  "author": "J. R. R. Tolkien",
+  "status": "to_read"
+}
+```
+
+**Response:**
+```json
+{
+  "id": 3,
+  "name": "The Hobbit",
+  "author": "J. R. R. Tolkien",
+  "status": "to_read"
+}
+```
+
+### Get a Book by ID
+
+**Endpoint:** `GET /reading-list/books/{id}`
+
+**Response:**
+```json
+{
+  "id": 1,
+  "name": "The Lord of the Rings",
+  "author": "J. R. R. Tolkien",
+  "status": "to_read"
+}
+```
+
+**Error Response (404):** Empty response with 404 status
+
+### Update a Book Status
+
+**Endpoint:** `PUT /reading-list/books/{id}`
+
+**Request Body:**
+```json
+{
+  "status": "read"
+}
+```
+
+**Response:**
+```json
+{
+  "id": 1,
+  "name": "The Lord of the Rings",
+  "author": "J. R. R. Tolkien",
+  "status": "read"
+}
+```
+
+### Delete a Book
+
+**Endpoint:** `DELETE /reading-list/books/{id}`
+
+**Response (204):** No content
+
+## Project Structure
+
+```
+service-python-reading-list/
+├── app.py               # Main Flask application
+├── requirements.txt     # Python dependencies
+├── Dockerfile          # Container build configuration
+├── workload.yaml       # OpenChoreo workload descriptor
+├── openapi.yaml        # OpenAPI specification
+└── test_app.py         # Unit tests
+```
+
+## Local Development
+
+### Prerequisites
+
+- Python 3.x
+
+### Run Locally
 
 ```bash
+# Navigate to the service directory
+cd service-python-reading-list
+
+# Install dependencies
 pip3 install -r requirements.txt
+
+# Run the Flask application
 flask run
+```
+
+The service will start on http://localhost:5000
+
+### Run Tests
+
+```bash
+# Run unit tests
+python3 test_app.py -v
+```
+
+### Test with cURL
+
+```bash
+# List all books
+curl http://localhost:5000/reading-list/books
+
+# Add a new book
+curl -X POST http://localhost:5000/reading-list/books \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "The Hobbit",
+    "author": "J. R. R. Tolkien",
+    "status": "to_read"
+  }'
+
+# Get a specific book
+curl http://localhost:5000/reading-list/books/1
+
+# Update a book status
+curl -X PUT http://localhost:5000/reading-list/books/1 \
+  -H "Content-Type: application/json" \
+  -d '{"status": "read"}'
+
+# Delete a book
+curl -X DELETE http://localhost:5000/reading-list/books/1
 ```
