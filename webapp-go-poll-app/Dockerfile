@@ -32,7 +32,6 @@ COPY --from=builder /build/webapp .
 
 # Copy templates and static files
 COPY templates/ templates/
-COPY static/ static/
 
 # Expose port 8080
 EXPOSE 8080
