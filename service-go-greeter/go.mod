@@ -1,3 +1,3 @@
-module github.com/wso2/choreo-sample-apps/go/greeter
+module github.com/openchoreo/sample-workloads/service-go-greeter
 
 go 1.21

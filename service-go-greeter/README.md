@@ -1,53 +1,91 @@
 # Go Greeter Service
 
-## Repository File Structure
+A simple HTTP greeter service built with Go's standard library. This service demonstrates a basic REST API with graceful shutdown handling.
 
-The below table gives a brief overview of the important files in the greeter service.\
-Note: The following file paths are relative to the path /go/greeter
+## Deploy in OpenChoreo
 
-| Filepath               | Description                                                                                                                                                          |
-| ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| main.go                | The Go-based Greeter service code.                                                                                                                                   |
-| Dockerfile             | Choreo uses the Dockerfile to build the container image of the application.                                                                                          |
-| .choreo/endpoints.yaml | Choreo-specific configuration that provides information about how Choreo exposes the service.                                                                        |
-| openapi.yaml           | OpenAPI contract of the greeter service. This is needed to publish our service as a managed API. This openapi.yaml file is referenced by the .choreo/endpoints.yaml. |
+Follow these steps to deploy the application in OpenChoreo:
 
-### Prerequisites
-1. Fork the repositoy
+### 1. Create a Component
+- Set up OpenChoreo following the instructions at https://openchoreo.dev
+- Open the Backstage UI and navigate to **Create**
+- Select **Component Type: Service**
+- After creation, navigate to the **Workflows** tab to view builds
 
-## Deploy Application
+### 2. Build and Deploy
+- Once the build completes successfully, go to the **Deploy** tab
+- Click **Deploy** to deploy the service to your environment
 
-Please refer to the Choreo documentation under the [Develop a REST API](https://wso2.com/choreo/docs/develop-components/develop-services/develop-a-rest-api/#step-1-create-a-service-component-from-a-dockerfile) section to learn how to deploy the application.
+### 3. Test the Service
+Navigate to the **Test** section in the left menu and use the OpenAPI Console to test the service endpoints.
 
-You can select either Docker or Go as buildpacks. Fill as follow according to selected Buildpack.
+## API Endpoints
 
-1. Select `Service` Card from Component Creation Wizard
-2. Select `Go` as the buildpack. Fill as follow according to selected Buildpack.
+### Greet
 
-    | **Field**             | **Description**                               |
-    |-----------------------|-----------------------------------------------|
-    |Name           | Greeting Service              |
-    |Description    | greeting service        |
-    | **GitHub Account**    | Your account                                  |
-    | **GitHub Repository** | choreo-samples |
-    | **Branch**            | **`main`**                               |
-    | **Buildpack**      | `Go` |
-    | **Select Go Project Directory**       | hello-world-go-task |
-    | **Language Version**              | 1.x |
+Send a personalized greeting.
 
-3. Click Create. Once the component creation is complete, you will see the component overview page.
-4. Deploy the created component
+**Endpoint:** `GET /greeter/greet`
 
-## Execute the Sample Locally
+**Query Parameters:**
+- `name` (optional) - The name to greet. Defaults to "Stranger" if not provided.
 
-Navigate to the Go application directory
-
-```bash
-cd greeting-service-go/go/greeter
+**Example Request:**
+```
+GET /greeter/greet?name=Alice
 ```
 
-Run the service
+**Response:**
+```
+Hello, Alice!
+```
 
-```shell
+**Example Request (without name):**
+```
+GET /greeter/greet
+```
+
+**Response:**
+```
+Hello, Stranger!
+```
+
+## Project Structure
+
+```
+service-go-greeter/
+├── main.go              # Main service implementation
+├── go.mod               # Go module definition
+├── Dockerfile           # Container build configuration
+├── openapi.yaml         # OpenAPI specification
+├── workload.yaml        # OpenChoreo workload descriptor
+└── README.md            # This file
+```
+
+## Local Development
+
+### Prerequisites
+
+- Go 1.x or later
+
+### Run Locally
+
+```bash
+# Navigate to the service directory
+cd service-go-greeter
+
+# Run the service
 go run main.go
+```
+
+The service will start on http://localhost:9090
+
+### Test Locally
+
+```bash
+# Test with a name
+curl "http://localhost:9090/greeter/greet?name=Alice"
+
+# Test without a name
+curl "http://localhost:9090/greeter/greet"
 ```
