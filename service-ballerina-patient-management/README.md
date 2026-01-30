@@ -1,69 +1,68 @@
-# Patient Management Service (Mediflow) - Ballerina
+# Patient Management Service (MediFlow) - Ballerina
 
-This is a simple patient management REST service developed using Ballerina. This service provides functionalities to manage patient data, including adding a new patient, retrieving patient details by name, and listing all patients.
+A REST API service for managing patient records, built with Ballerina. This service demonstrates CRUD operations with an in-memory data store, providing endpoints to add, retrieve, and list patient information.
 
-## Deploy in Choreo
+## Deploy in OpenChoreo
 
-Follow these steps to deploy the application in Choreo.
+Follow these steps to deploy the application in OpenChoreo:
 
-1. Create a component
-     - Sign in to [Choreo](https://wso2.com/choreo/)
-     - If you already have one or more components in your project, click **+ Create**. Otherwise, click the **Service** card. 
-     - Provide a name and description for the component.
-     - Click **`Try with Sample URL`**.
-     - Select `Ballerina` as the `Buildpack`.
-     - Select `patient-management-service` as the `Ballerina Project Directory`.
-     - Click **Create**. Once the component is created, the initial build will trigger automatically, generating a container image.
-2. Build and deploy the component
-     - After the build completes, go to the left navigation menu and click **Deploy**. 
-     - Deploy the service.
+### 1. Create a Component
+- Set up OpenChoreo following the instructions at https://openchoreo.dev
+- Open the Backstage UI and navigate to **Create**
+- Select **Component Type: Service**
+- Provide the repository URL and application path
+- After creation, navigate to the **Workflows** tab to view component builds
 
-## Test the service
-You can go to the left navigation menu, click **Test**, and use the OpenAPI Console to test the service endpoints.
+### 2. Build and Deploy
+- Once the build completes successfully, go to the **Deploy** tab
+- Click **Deploy** to deploy the service to your environment
 
-### 1. Health check
-Verify if the service is operational:
+## API Endpoints
 
-**Endpoint:** `/health`
-**Method:** `GET`
+All endpoints are prefixed with `/mediflow`.
 
-📌 Response:
-```bash
+### Health Check
+
+**Endpoint:** `GET /mediflow/health`
+
+**Response:**
+```json
 {
   "status": "MediFlow is operational"
 }
 ```
 
-### 2. Add a new patient
+### Add a New Patient
 
-**Endpoint:** `/patients`  
-**Method:** `POST` 
+**Endpoint:** `POST /mediflow/patients`
 
-```bash
+**Request:**
+```json
 {
   "name": "Alice",
   "age": 30,
   "condition": "Healthy"
 }
 ```
-📌 Response:
-```bash
+
+**Response:**
+```json
 {
   "message": "Patient added",
-  "patient": "{
+  "patient": {
     "name": "Alice",
     "age": 30,
     "condition": "Healthy"
-  }"
+  }
 }
 ```
-### 3. Retrieve a patient by name
 
-**Endpoint:** `/patients/{name}`  
-**Method:** `GET`  
+### Retrieve a Patient
 
-📌 Response:
-```bash
+**Endpoint:** `GET /mediflow/patients/{name}`
+
+**Response:**
+```json
 {
   "name": "Alice",
   "age": 30,
@@ -71,18 +70,17 @@ Verify if the service is operational:
 }
 ```
 
-### 4. List all patients
+### List All Patients
 
-**Endpoint:** `/patients`  
-**Method:** `GET`  
+**Endpoint:** `GET /mediflow/patients`
 
-📌 Response:
-```bash
+**Response:**
+```json
 {
-  "alice": "{
+  "alice": {
     "name": "Alice",
     "age": 30,
     "condition": "Healthy"
-  }"
+  }
 }
 ```
