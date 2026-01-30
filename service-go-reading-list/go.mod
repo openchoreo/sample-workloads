@@ -1,4 +1,4 @@
-module github.com/wso2/choreo-sample-apps/go/rest-api
+module github.com/openchoreo/sample-workloads/service-go-reading-list
 
 go 1.22.4
 

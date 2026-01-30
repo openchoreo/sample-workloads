@@ -10,8 +10,8 @@ import (
 	"net/http"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/wso2/choreo-sample-apps/go/rest-api/internal/models"
-	"github.com/wso2/choreo-sample-apps/go/rest-api/internal/repositories"
+	"github.com/openchoreo/sample-workloads/service-go-reading-list/internal/models"
+	"github.com/openchoreo/sample-workloads/service-go-reading-list/internal/repositories"
 )
 
 type BookController struct {

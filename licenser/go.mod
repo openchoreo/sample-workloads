@@ -1,4 +1,4 @@
-module licenser
+module github.com/openchoreo/sample-workloads/licenser
 
 go 1.24.3
 
