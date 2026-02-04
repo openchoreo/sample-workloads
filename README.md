@@ -1,4 +1,6 @@
 # OpenChoreo Sample Workloads
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fopenchoreo%2Fsample-workloads.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fopenchoreo%2Fsample-workloads?ref=badge_shield)
+
 
 Welcome to the official repository of sample workloads for **[OpenChoreo](https://github.com/openchoreo/openchoreo)**! 
 
@@ -56,3 +58,6 @@ We welcome contributions! If you have a sample workload that demonstrates a new 
 ## License
 
 This project is licensed under the Apache 2.0 License - see the **[LICENSE](LICENSE)** file for details.
+
+
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fopenchoreo%2Fsample-workloads.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fopenchoreo%2Fsample-workloads?ref=badge_large)
