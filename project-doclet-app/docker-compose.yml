@@ -1,0 +1,67 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: doclet
+      POSTGRES_PASSWORD: doclet
+      POSTGRES_DB: doclet
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  nats:
+    image: nats:2.10-alpine
+    ports:
+      - "4222:4222"
+      - "8222:8222"
+
+  document-svc:
+    build:
+      context: ./service-go-document
+      dockerfile: Dockerfile
+    environment:
+      DOCLET_DOCUMENT_ADDR: ":8080"
+      DOCLET_DATABASE_URL: "postgres://doclet:doclet@postgres:5432/doclet?sslmode=disable"
+      DOCLET_NATS_URL: "nats://nats:4222"
+    ports:
+      - "8081:8080"
+    depends_on:
+      - postgres
+      - nats
+    profiles:
+      - app
+
+  collab-svc:
+    build:
+      context: ./service-go-collab
+      dockerfile: Dockerfile
+    environment:
+      DOCLET_COLLAB_ADDR: ":8090"
+      DOCLET_NATS_URL: "nats://nats:4222"
+    ports:
+      - "8090:8090"
+    depends_on:
+      - nats
+    profiles:
+      - app
+
+  frontend:
+    build:
+      context: .
+      dockerfile: webapp-react-frontend/Dockerfile
+      args:
+        VITE_DOC_SERVICE_URL: "http://document-svc:8080"
+        VITE_COLLAB_WS_URL: "ws://collab-svc:8090/ws"
+    ports:
+      - "5173:80"
+    volumes:
+      - ./webapp-react-frontend/config.example.json:/usr/share/nginx/html/config.json:ro
+    depends_on:
+      - document-svc
+      - collab-svc
+    profiles:
+      - app
+
+volumes:
+  postgres_data:
