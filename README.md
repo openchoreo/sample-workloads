@@ -29,14 +29,28 @@ Each sample includes:
 
 ## Directory Structure
 
+### Single-component samples
 
-Each folder follows the convention `<component-type>-<language>-<name>`, with examples such as:
+Each folder follows the convention `<component-type>-<language>-<name>`:
 
-```bash
-├── service-go-reading-list/  
-├── service-go-greeter/              
-├── webapp-react-nginx/         
-└── <component-type>-<language>-<name>/ 
+```
+├── service-go-reading-list/
+├── service-go-greeter/
+├── webapp-react-nginx/
+└── <component-type>-<language>-<name>/
+```
+
+### Multi-component projects
+
+Projects that deploy multiple components into a single OpenChoreo project use the `project-<name>/` prefix. Each component sub-directory follows the same `<component-type>-<language>-<name>` convention:
+
+```
+└── project-doclet-app/
+    ├── README.md
+    ├── docker-compose.yml
+    ├── service-go-document/
+    ├── service-go-collab/
+    └── webapp-react-frontend/
 ```
 
 
