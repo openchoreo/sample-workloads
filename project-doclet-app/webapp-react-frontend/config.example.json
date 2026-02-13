@@ -1,0 +1,4 @@
+{
+  "docServiceUrl": "http://localhost:8081",
+  "collabWsUrl": "ws://localhost:8090/ws"
+}
