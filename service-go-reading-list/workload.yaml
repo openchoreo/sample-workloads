@@ -14,6 +14,10 @@ endpoints:
   - # +required Unique name for the endpoint
     # This name will be used when generating the managed API and as the key in the CR map
     name: reading-list-api
+    # +optional Visibility of the endpoint
+    # Allowed values: project, namespace, internal, external
+    visibility:
+      - external
     # +required Numeric port value that gets exposed via the endpoint
     port: 8080
     # +required Type of traffic that the endpoint is accepting
