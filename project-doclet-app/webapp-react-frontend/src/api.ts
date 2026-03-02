@@ -16,11 +16,11 @@ export type DocumentResponse = {
 
 export async function listDocuments(query: string): Promise<DocumentListItem[]> {
   const config = await loadConfig()
-  const url = new URL(`${config.docServiceUrl}/documents`)
+  let url = `${config.docServiceUrl}/documents`
   if (query) {
-    url.searchParams.set('query', query)
+    url += `?query=${encodeURIComponent(query)}`
   }
-  const res = await fetch(url.toString())
+  const res = await fetch(url)
   if (!res.ok) {
     throw new Error('Failed to load documents')
   }
@@ -74,5 +74,5 @@ export async function deleteDocument(documentId: string): Promise<void> {
 
 export async function getCollabWsUrl(): Promise<string> {
   const config = await loadConfig()
-  return config.collabWsUrl || 'ws://localhost:8090/ws'
+  return config.collabWsUrl || '/ws/collab-svc'
 }

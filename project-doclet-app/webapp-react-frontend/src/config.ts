@@ -19,8 +19,8 @@ export async function loadConfig(): Promise<AppConfig> {
     // Fall back to defaults below.
   }
   cachedConfig = {
-    docServiceUrl: 'http://localhost:8080',
-    collabWsUrl: 'ws://localhost:8090/ws',
+    docServiceUrl: '/api/document-svc',
+    collabWsUrl: '/ws/collab-svc',
   }
   return cachedConfig
 }

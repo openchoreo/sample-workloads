@@ -61,11 +61,11 @@ export class DocletProvider {
   }
 
   private connect() {
-    const url = new URL(this.wsUrl)
-    url.searchParams.set('document_id', this.documentId)
-    url.searchParams.set('client_id', this.clientId)
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
+    const base = `${protocol}//${window.location.host}${this.wsUrl}`
+    const url = `${base}?document_id=${encodeURIComponent(this.documentId)}&client_id=${encodeURIComponent(this.clientId)}`
 
-    this.ws = new WebSocket(url.toString())
+    this.ws = new WebSocket(url)
     this.ws.onopen = () => {
       this.onStatus?.('connected')
       this.sendSnapshot()
