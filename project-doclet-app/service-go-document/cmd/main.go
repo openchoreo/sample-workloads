@@ -14,7 +14,7 @@ import (
 func main() {
 	cfg := document.LoadConfig()
 	if cfg.DatabaseURL == "" {
-		log.Fatal("DOCLET_DATABASE_URL is required")
+		log.Fatal("DOCLET_DATABASE_URL or DB_HOST is required")
 	}
 
 	db, err := document.OpenDatabase(cfg.DatabaseURL)
