@@ -1,6 +1,6 @@
 # Patient Management Service (Mediflow) - Ballerina
 
-This is a simple patient management REST service developed using Ballerina. This service provides functionalities to manage patient data, including adding a new patient, retrieving patient details by name, and listing all patients.
+This is a simple patient management REST service developed using Ballerina. This service provides functionalities to manage patient data, including adding a new patient, retrieving patient details by name, and listing all the patients.
 
 ## Deploy in OpenChoreo
 
