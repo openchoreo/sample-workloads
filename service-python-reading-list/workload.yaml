@@ -21,9 +21,9 @@ endpoints:
     # +required Numeric port value that gets exposed via the endpoint
     port: 5000
     # +required Type of traffic that the endpoint is accepting
-    # Allowed values: REST, GraphQL, gRPC, TCP, UDP, HTTP, Websocket
-    type: REST
+    # Allowed values: GraphQL, gRPC, TCP, UDP, HTTP, Websocket
+    type: HTTP
     # +optional The path to the schema definition file
-    # This is applicable to REST, GraphQL, and gRPC endpoint types
+    # This is applicable to HTTP, GraphQL, and gRPC endpoint types
     # The path should be relative to the workload.yaml file location
     schemaFile: openapi.yaml
