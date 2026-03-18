@@ -21,5 +21,5 @@ endpoints:
     # +required Numeric port value that gets exposed via the endpoint
     port: 80
     # +required Type of traffic that the endpoint is accepting
-    # Allowed values: REST, GraphQL, gRPC, TCP, UDP, HTTP, Websocket
+    # Allowed values: GraphQL, gRPC, TCP, UDP, HTTP, Websocket
     type: HTTP
