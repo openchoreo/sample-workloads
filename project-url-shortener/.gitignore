@@ -1,0 +1,36 @@
+# Go binaries
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+api-service/api-service
+analytics-service/analytics-service
+frontend/frontend
+
+# Go test and coverage
+*.test
+*.out
+coverage.html
+
+# Go workspace (optional, often local)
+go.work.sum
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Docker
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE / editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~

@@ -1,0 +1,33 @@
+apiVersion: openchoreo.dev/v1alpha1
+
+metadata:
+  name: api-service
+
+endpoints:
+  - name: api
+    port: 8080
+    type: HTTP
+
+dependencies:
+  endpoints:
+    - component: snip-postgres
+      name: postgres
+      visibility: project
+      envBindings:
+        address: _
+    - component: snip-redis
+      name: redis
+      visibility: project
+      envBindings:
+        address: REDIS_ADDR
+
+configurations:
+  env:
+    - name: PORT
+      value: "8080"
+    - name: POSTGRES_DSN
+      value: "postgres://postgres:postgres@snip-postgres:5432/urlshortener?sslmode=disable"
+    - name: OTEL_ENABLED
+      value: "true"
+    - name: OTEL_EXPORTER_ENDPOINT
+      value: "http://opentelemetry-collector.openchoreo-observability-plane.svc.cluster.local:4318"
