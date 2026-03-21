@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>snip.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div id="app">
+    <!-- Welcome State -->
+    <section id="welcome" class="view active">
+      <div class="welcome-container">
+        <h1 class="brand">snip.</h1>
+        <p class="tagline">shorten URLs, track clicks</p>
+        <form id="username-form" class="username-form">
+          <input type="text" id="username-input" placeholder="enter your username" autocomplete="off" required>
+          <button type="submit" class="btn btn-primary">get started</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- Dashboard State -->
+    <section id="dashboard" class="view">
+      <header class="topbar">
+        <h1 class="brand-sm" onclick="navigateTo('dashboard')">snip.</h1>
+        <nav class="tabs">
+          <button type="button" class="tab active" data-tab="my-urls" onclick="switchTab('my-urls')">my URLs</button>
+          <button type="button" class="tab" data-tab="top-urls" onclick="switchTab('top-urls')">top URLs</button>
+        </nav>
+        <div class="topbar-right">
+          <span id="display-username" class="username-badge"></span>
+          <button type="button" id="logout-btn" class="btn btn-ghost">logout</button>
+        </div>
+      </header>
+      <main class="dashboard-main">
+        <!-- My URLs tab -->
+        <div id="tab-my-urls" class="tab-content active">
+          <div class="shorten-section">
+            <h2>shorten a URL</h2>
+            <form id="shorten-form" class="shorten-form">
+              <div class="input-row">
+                <input type="text" id="url-input" placeholder="paste a URL" required>
+                <input type="text" id="slug-input" placeholder="custom slug (optional)" maxlength="20">
+                <button type="submit" class="btn btn-primary">snip it</button>
+              </div>
+            </form>
+            <div id="shorten-result" class="shorten-result hidden"></div>
+            <div id="shorten-error" class="error-msg hidden"></div>
+          </div>
+          <div class="urls-section">
+            <h2>your URLs</h2>
+            <div id="urls-list" class="urls-list">
+              <p class="empty-state">no URLs yet — create your first one above</p>
+            </div>
+          </div>
+        </div>
+        <!-- Top URLs tab -->
+        <div id="tab-top-urls" class="tab-content">
+          <div class="urls-section">
+            <h2>top URLs across all users</h2>
+            <div id="top-urls-list" class="urls-list">
+              <div class="loading">loading...</div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </section>
+
+    <!-- Analytics State -->
+    <section id="analytics" class="view">
+      <header class="topbar">
+        <h1 class="brand-sm" onclick="navigateTo('dashboard')">snip.</h1>
+        <div class="topbar-right">
+          <span id="analytics-username" class="username-badge"></span>
+          <button type="button" id="analytics-logout-btn" class="btn btn-ghost">logout</button>
+        </div>
+      </header>
+      <main class="analytics-main">
+        <div class="analytics-toolbar">
+          <button type="button" class="btn btn-ghost" onclick="navigateTo('dashboard')">← back to dashboard</button>
+        </div>
+        <div id="analytics-content"></div>
+      </main>
+    </section>
+  </div>
+  <script src="/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,73 @@
+services:
+  # Schema is baked into the image (db/Dockerfile) to avoid
+  # volume-mount complexity in k8s / OpenChoreo environments.
+  postgres:
+    build: ./db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: urlshortener
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  api-service:
+    build: ./api-service
+    ports:
+      - "9701:8080"
+    environment:
+      PORT: "8080"
+      POSTGRES_DSN: "postgres://postgres:postgres@postgres:5432/urlshortener?sslmode=disable"
+      REDIS_ADDR: "redis:6379"
+      OTEL_ENABLED: "false"
+      OTEL_EXPORTER_ENDPOINT: "http://opentelemetry-collector:4318"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  analytics-service:
+    build: ./analytics-service
+    ports:
+      - "9702:8081"
+    environment:
+      PORT: "8081"
+      POSTGRES_DSN: "postgres://postgres:postgres@postgres:5432/urlshortener?sslmode=disable"
+      REDIS_ADDR: "redis:6379"
+      OTEL_ENABLED: "false"
+      OTEL_EXPORTER_ENDPOINT: "http://opentelemetry-collector:4318"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "9700:3000"
+    environment:
+      PORT: "3000"
+      API_SERVICE_URL: "http://api-service:8080"
+      ANALYTICS_SERVICE_URL: "http://analytics-service:8081"
+      OTEL_ENABLED: "false"
+      OTEL_EXPORTER_ENDPOINT: "http://opentelemetry-collector:4318"
+    depends_on:
+      - api-service
+      - analytics-service
+
+volumes:
+  pgdata:
