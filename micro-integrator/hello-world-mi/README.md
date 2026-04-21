@@ -24,7 +24,34 @@ kubectl apply \
 
 ## Deploy
 
-### 1. Create the Component and trigger a build
+### Option A: Backstage Portal
+
+1. Navigate to your project in the Backstage portal and click **Create Component** from the Project Overview.
+
+2. Choose **Micro Integrator** from the component templates.
+
+   ![Choose Micro Integrator template](./step-02-choose-template.png)
+
+3. Complete the required fields in the create form: enter a **Component Name**, and optionally a display name and description.
+
+   ![Create component form](./step-03-create-form.png)
+
+4. Set the deployment source to **Build from Source**, select **wso2-micro-integrator** as the build workflow, then provide the Git repository URL, branch, and application path.
+   - Repository URL: `https://github.com/wso2/choreo-samples`
+   - Branch: `main`
+   - Application path: `./micro-integrator/hello-world-mi`
+
+   ![Build from source configuration](./step-04-build-source.png)
+
+5. Review the provided information and click **Create**.
+
+6. From the component overview page, click **Build**. Once the build succeeds, click **Deploy**.
+
+---
+
+### Option B: kubectl
+
+#### 1. Create the Component and trigger a build
 
 ```bash
 kubectl apply -f - <<EOF
@@ -48,7 +75,7 @@ spec:
         url: "https://github.com/wso2/choreo-samples"
         revision:
           branch: "main"
-        appPath: "hello-world-mi"
+        appPath: "./micro-integrator/hello-world-mi"
 ---
 apiVersion: openchoreo.dev/v1alpha1
 kind: WorkflowRun
@@ -66,11 +93,11 @@ spec:
         url: "https://github.com/wso2/choreo-samples"
         revision:
           branch: "main"
-        appPath: "hello-world-mi"
+        appPath: "./micro-integrator/hello-world-mi"
 EOF
 ```
 
-### 2. Watch the build
+#### 2. Watch the build
 
 ```bash
 kubectl get workflow hello-world-mi-build-01 -n workflows-default --watch
@@ -78,27 +105,13 @@ kubectl get workflow hello-world-mi-build-01 -n workflows-default --watch
 
 The build runs four steps: `checkout-source` → `build-image` → `publish-image` → `generate-workload-cr`. The `build-image` step downloads Maven dependencies and pulls `wso2/wso2mi:4.4.0` — expect 3–5 minutes on first run.
 
-### 3. Declare the HTTP endpoint
-
-The build generates a `Workload` without endpoint metadata. Patch it to expose port 8290:
-
-```bash
-kubectl patch workload hello-world-mi-workload -n default --type=merge -p '{
-  "spec": {
-    "endpoints": {
-      "http": { "type": "HTTP", "port": 8290, "visibility": ["external"] }
-    }
-  }
-}'
-```
-
-### 4. Verify the deployment
+#### 3. Verify the deployment
 
 ```bash
 kubectl get deployment -A -l openchoreo.dev/component=hello-world-mi
 ```
 
-### 5. Get the URL and invoke
+#### 4. Get the URL and invoke
 
 ```bash
 HOSTNAME=$(kubectl get releasebinding -n default \
@@ -115,7 +128,7 @@ curl "http://${HOSTNAME}:19080${PATH_PREFIX}/HelloWorld"
 Expected response:
 
 ```json
-{"Hello": "World"}
+{ "Hello": "World" }
 ```
 
 ## Clean up
