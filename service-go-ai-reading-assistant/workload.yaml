@@ -1,0 +1,12 @@
+# OpenChoreo Workload Descriptor
+apiVersion: openchoreo.dev/v1alpha1
+
+metadata:
+  name: ai-reading-assistant
+
+endpoints:
+  - name: chat-api
+    visibility:
+      - external
+    port: 8080
+    type: HTTP
