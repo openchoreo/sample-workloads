@@ -1,0 +1,12 @@
+# OpenChoreo Workload Descriptor
+apiVersion: openchoreo.dev/v1alpha1
+
+metadata:
+  name: reading-notes-mcp
+
+endpoints:
+  - name: mcp
+    visibility:
+      - external
+    port: 8081
+    type: HTTP
