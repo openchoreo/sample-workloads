@@ -1,0 +1,8 @@
+go 1.23.0
+
+use (
+    ./api-service
+    ./analytics-service
+    ./auth-service
+    ./frontend
+)

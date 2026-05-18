@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Latency Lab — Notes</title>
+<style>
+  body { font-family: -apple-system, system-ui, sans-serif; max-width: 760px; margin: 2rem auto; padding: 0 1rem; color: #222; }
+  h1 { margin-bottom: 0.25rem; }
+  .sub { color: #666; margin-top: 0; }
+  fieldset { border: 1px solid #ddd; border-radius: 6px; padding: 1rem; margin: 1rem 0; }
+  legend { padding: 0 0.5rem; font-weight: 600; }
+  label { display: block; font-size: 0.85rem; color: #555; margin-top: 0.5rem; }
+  input, textarea, select, button { font: inherit; padding: 0.4rem 0.6rem; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+  input, textarea, select { width: 100%; }
+  textarea { min-height: 80px; resize: vertical; }
+  button { background: #1f6feb; color: white; border: 0; cursor: pointer; padding: 0.5rem 1rem; }
+  button.secondary { background: #555; }
+  .row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; }
+  pre { background: #f6f8fa; padding: 0.75rem; border-radius: 4px; overflow: auto; font-size: 0.85rem; }
+  .note { border: 1px solid #eee; border-radius: 6px; padding: 0.75rem; margin: 0.5rem 0; }
+  .meta { color: #888; font-size: 0.8rem; }
+  code { font-size: 0.85em; }
+</style>
+</head>
+<body>
+  <h1>Latency Lab</h1>
+  <p class="sub">Notes service with conditional latency / fault injection across <strong>frontend → api → auth → db/cache</strong>.</p>
+
+  <fieldset>
+    <legend>Auth</legend>
+    <label>Username</label>
+    <input id="username" value="alice" />
+    <p>
+      <button onclick="registerUser()">POST /api/auth/users</button>
+      <span class="meta">token: <code id="tok">(none)</code></span>
+    </p>
+  </fieldset>
+
+  <fieldset>
+    <legend>Latency knobs (forwarded to every backend hop, including auth)</legend>
+    <div class="row">
+      <div>
+        <label>delay_ms</label>
+        <input id="delay_ms" type="number" min="0" max="30000" placeholder="0" />
+      </div>
+      <div>
+        <label>delay_stage</label>
+        <select id="delay_stage">
+          <option value="">(default: handler)</option>
+          <option value="handler">handler</option>
+          <option value="cache">cache</option>
+          <option value="db">db</option>
+          <option value="all">all</option>
+        </select>
+      </div>
+      <div>
+        <label>fail_rate (0–1)</label>
+        <input id="fail_rate" type="number" step="0.05" min="0" max="1" placeholder="0" />
+      </div>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Create note</legend>
+    <label>Body</label>
+    <textarea id="body">hello latency lab</textarea>
+    <p><button onclick="createNote()">POST /api/notes</button></p>
+  </fieldset>
+
+  <fieldset>
+    <legend>List / fetch</legend>
+    <p>
+      <button onclick="listNotes()">GET /api/notes</button>
+      <button class="secondary" onclick="topNotes()">GET /api/analytics/top</button>
+    </p>
+    <div id="notes"></div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Last response</legend>
+    <pre id="out">(none)</pre>
+  </fieldset>
+
+<script>
+function qs() {
+  const params = new URLSearchParams();
+  const d = document.getElementById('delay_ms').value;
+  const s = document.getElementById('delay_stage').value;
+  const f = document.getElementById('fail_rate').value;
+  if (d) params.set('delay_ms', d);
+  if (s) params.set('delay_stage', s);
+  if (f) params.set('fail_rate', f);
+  const q = params.toString();
+  return q ? '?' + q : '';
+}
+
+function token() { return localStorage.getItem('lab.token') || ''; }
+function setToken(t) {
+  if (t) localStorage.setItem('lab.token', t);
+  document.getElementById('tok').textContent = token() || '(none)';
+}
+setToken();
+
+async function call(method, path, body, opts = {}) {
+  const t0 = performance.now();
+  const o = { method, headers: {} };
+  if (body !== undefined) {
+    o.headers['Content-Type'] = 'application/json';
+    o.body = JSON.stringify(body);
+  }
+  if (opts.auth !== false && token()) o.headers['X-Auth-Token'] = token();
+  const url = path + qs();
+  const r = await fetch(url, o);
+  const ms = Math.round(performance.now() - t0);
+  let data; try { data = await r.json(); } catch { data = null; }
+  document.getElementById('out').textContent =
+    `${method} ${url}\n→ ${r.status} (${ms} ms)\n` + JSON.stringify(data, null, 2);
+  return { status: r.status, data };
+}
+
+async function registerUser() {
+  const username = document.getElementById('username').value.trim();
+  const { data } = await call('POST', '/api/auth/users', { username }, { auth: false });
+  if (data && data.token) setToken(data.token);
+}
+
+async function createNote() {
+  const body = document.getElementById('body').value;
+  await call('POST', '/api/notes', { body });
+  listNotes();
+}
+
+async function listNotes() {
+  const { data } = await call('GET', '/api/notes');
+  render(data || []);
+}
+
+async function topNotes() {
+  const { data } = await call('GET', '/api/analytics/top');
+  render(data || [], true);
+}
+
+function render(items, isTop = false) {
+  const el = document.getElementById('notes');
+  el.textContent = '';
+  if (!items.length) {
+    const p = document.createElement('p');
+    p.className = 'meta';
+    p.textContent = 'no notes';
+    el.appendChild(p);
+    return;
+  }
+  for (const n of items) {
+    const note = document.createElement('div');
+    note.className = 'note';
+
+    const header = document.createElement('div');
+    const author = document.createElement('strong');
+    author.textContent = n.author || '?';
+    const id = document.createElement('code');
+    id.textContent = n.id;
+    header.appendChild(author);
+    header.appendChild(document.createTextNode(' · '));
+    header.appendChild(id);
+    header.appendChild(document.createTextNode(` · views: ${n.view_count ?? 0}`));
+
+    const body = document.createElement('div');
+    body.textContent = n.body || '';
+
+    const meta = document.createElement('div');
+    meta.className = 'meta';
+    const mkLink = (label, handler) => {
+      const a = document.createElement('a');
+      a.href = '#';
+      a.textContent = label;
+      a.dataset.id = n.id;
+      a.addEventListener('click', (e) => {
+        e.preventDefault();
+        handler(a.dataset.id);
+      });
+      return a;
+    };
+    meta.appendChild(mkLink('view', getNote));
+    meta.appendChild(document.createTextNode(' · '));
+    meta.appendChild(mkLink('stats', stats));
+    if (!isTop) {
+      meta.appendChild(document.createTextNode(' · '));
+      meta.appendChild(mkLink('delete', del));
+    }
+
+    note.appendChild(header);
+    note.appendChild(body);
+    note.appendChild(meta);
+    el.appendChild(note);
+  }
+}
+
+async function getNote(id) { await call('GET', '/api/notes/' + id); }
+async function stats(id)   { await call('GET', '/api/analytics/' + id); }
+async function del(id)     { await call('DELETE', '/api/notes/' + id); listNotes(); }
+</script>
+</body>
+</html>
