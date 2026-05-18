@@ -1,0 +1,9 @@
+apiVersion: openchoreo.dev/v1alpha1
+
+metadata:
+  name: redis
+
+endpoints:
+  - name: redis
+    port: 6379
+    type: TCP

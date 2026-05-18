@@ -1,0 +1,14 @@
+apiVersion: openchoreo.dev/v1alpha1
+
+metadata:
+  name: api-service-broken
+
+endpoints:
+  - name: api
+    port: 8080
+    type: HTTP
+
+configurations:
+  env:
+    - name: PORT
+      value: "8080"
