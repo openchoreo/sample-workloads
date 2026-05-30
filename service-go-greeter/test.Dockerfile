@@ -10,24 +10,16 @@ RUN echo "busybox" > /registry-proof
 FROM alpine:3.20 AS test-alpine
 RUN echo "alpine" > /tmp/registry-proof
 
-FROM nginx:1.27-alpine AS test-nginx
-RUN echo "nginx" > /tmp/registry-proof
+# GCR pull (~1 MB)
+FROM gcr.io/google-containers/pause:3.9 AS test-gcr
+RUN echo "gcr" > /tmp/registry-proof
 
-FROM python:3.12-alpine AS test-python
-RUN echo "python" > /tmp/registry-proof
-
-FROM node:22-alpine AS test-node
-RUN echo "node" > /tmp/registry-proof
-
-# GCR pull
-FROM gcr.io/distroless/static-debian12:latest AS test-gcr
-
-# GHCR pull
-FROM ghcr.io/actions/actions-runner:2.321.0 AS test-ghcr
+# GHCR pull (~4 MB)
+FROM ghcr.io/jqlang/jq:latest AS test-ghcr
 RUN echo "ghcr" > /tmp/registry-proof
 
-# Quay pull
-FROM quay.io/podman/stable:latest AS test-quay
+# Quay pull (~4 MB)
+FROM quay.io/prometheus/busybox:latest AS test-quay
 RUN echo "quay" > /tmp/registry-proof
 
 FROM alpine:latest
@@ -36,10 +28,7 @@ WORKDIR /app
 COPY --from=builder /app/go-greeter .
 COPY --from=test-busybox /registry-proof /tmp/proof-busybox
 COPY --from=test-alpine /tmp/registry-proof /tmp/proof-alpine
-COPY --from=test-nginx /tmp/registry-proof /tmp/proof-nginx
-COPY --from=test-python /tmp/registry-proof /tmp/proof-python
-COPY --from=test-node /tmp/registry-proof /tmp/proof-node
-COPY --from=test-gcr /etc/os-release /tmp/proof-gcr
+COPY --from=test-gcr /tmp/registry-proof /tmp/proof-gcr
 COPY --from=test-ghcr /tmp/registry-proof /tmp/proof-ghcr
 COPY --from=test-quay /tmp/registry-proof /tmp/proof-quay
 
