@@ -10,5 +10,5 @@ COPY nginx.conf.template /etc/nginx/nginx.conf.template
 COPY docker-entrypoint.sh /usr/local/bin/doclet-entrypoint.sh
 RUN chmod +x /usr/local/bin/doclet-entrypoint.sh
 COPY --from=builder /app/dist /usr/share/nginx/html
-EXPOSE 80
+EXPOSE 8080
 ENTRYPOINT ["/usr/local/bin/doclet-entrypoint.sh"]
