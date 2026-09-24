@@ -2,7 +2,7 @@
 # The image is based on a small Alpine Linux image.
 # The image uses a non-root user with a known UID/GID to run the container.
 # The image has a single entrypoint, the go-greeter executable.
-FROM golang:1.21-alpine AS builder
+FROM golang:1.25-alpine AS builder
 
 # Set the working directory to /app
 WORKDIR /app
