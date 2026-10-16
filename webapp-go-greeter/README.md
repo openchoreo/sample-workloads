@@ -35,11 +35,27 @@ with a readable error, which is what you want a learner to see.
 readiness probe that checked a dependency would pull this pod out of service
 during someone else's outage — the mistake Course 2 lesson 6 warns about.
 
-## Tracing
+## Tracing and logs
 
-Incoming `traceparent`, `tracestate`, `baggage`, `x-request-id` and B3 headers
-are copied onto the downstream request, so browser -> web-ui -> greeting-service
-joins into a single trace rather than two unrelated ones.
+The app exports OpenTelemetry traces over OTLP and writes JSON logs that carry
+the `trace_id` and `span_id` of the request that produced them, so a log line
+can be matched to its trace and the other way round.
+
+A span is recorded for the inbound request and for the outbound call to
+greeting-service, and trace context is propagated on that call, so
+browser -> web-ui -> greeting-service is one trace rather than two unrelated
+ones.
+
+Tracing is best-effort. With no OTLP endpoint set it is simply disabled, and if
+the collector is unreachable the app logs a warning and serves normally.
+
+| Variable | Meaning |
+|---|---|
+| `OTEL_EXPORTER_OTLP_ENDPOINT` | the collector, e.g. `http://opentelemetry-collector.openchoreo-observability-plane.svc.cluster.local:4318` |
+| `OTEL_SERVICE_NAME` | service name in traces, default `web-ui` |
+
+`OPENCHOREO_COMPONENT`, `OPENCHOREO_ENVIRONMENT` and `OPENCHOREO_PROJECT` are
+attached as resource attributes when present.
 
 ## Run locally
 
