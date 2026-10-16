@@ -40,17 +40,16 @@ import (
 //go:embed templates/index.html
 var content embed.FS
 
-// web-ui adds its own line so the page can show which service produced which
-// half of the response.
+// A friendly second line to go with the greeting.
 var flourishes = []string{
-	"Hope your deploy is green.",
+	"Lovely to meet you.",
+	"Hope your day is going well.",
+	"That has a nice ring to it.",
 	"Someone had to say it first.",
-	"Delivered across two services.",
-	"That greeting travelled further than you'd think.",
-	"Freshly resolved, no addresses were hardcoded.",
-	"Brought to you by a declared dependency.",
-	"Your name went on a short journey.",
-	"Two hops, one hello.",
+	"Consider yourself greeted.",
+	"Always good to see a new name.",
+	"Here's to a good one.",
+	"Glad you stopped by.",
 }
 
 type greetResponse struct {

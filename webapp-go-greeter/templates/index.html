@@ -38,21 +38,15 @@
   button:disabled{opacity:.55; cursor:default; filter:none}
   .out{margin-top:26px; display:none}
   .out.show{display:block}
-  .hop{
-    border:1px solid var(--line); border-radius:12px; padding:16px 18px;
-    background:var(--panel-2); margin-bottom:10px;
+  .card-out{
+    border:1px solid var(--line); border-radius:12px; padding:22px 20px;
+    background:var(--panel-2); text-align:center;
   }
-  .hop .who{
-    font-size:11px; letter-spacing:.09em; text-transform:uppercase;
-    color:var(--muted); margin-bottom:7px; display:flex; gap:8px; align-items:center;
-  }
-  .dot{width:7px; height:7px; border-radius:50%; background:var(--accent)}
-  .hop.svc .dot{background:var(--accent-2)}
-  .msg{font-size:19px}
-  .hop.svc .msg{font-weight:650}
-  .meta{margin-top:14px; font-size:12px; color:var(--muted); font-family:ui-monospace,SFMono-Regular,Menlo,monospace; word-break:break-all}
-  .err{border-color:rgba(248,113,113,.5)}
-  .err .msg{color:var(--danger); font-size:15px}
+  .msg{font-size:26px; font-weight:650; letter-spacing:-.01em}
+  .sub-msg{margin-top:10px; font-size:15px; color:var(--muted)}
+  .err{border-color:rgba(248,113,113,.5); text-align:left}
+  .err .msg{color:var(--danger); font-size:16px; font-weight:600}
+  .err .sub-msg{margin-top:8px}
 </style>
 </head>
 <body>
@@ -84,22 +78,16 @@ f.addEventListener('submit', async (e) => {
     const r = await fetch('/api/greet?name=' + encodeURIComponent(name));
     const d = await r.json();
     out.innerHTML = d.error
-      ? `<div class="hop err">
-           <div class="who"><span class="dot"></span>could not reach greeting-service</div>
-           <div class="msg">${esc(d.error)}</div>
-         </div>
-         <div class="meta">tried ${esc(d.upstream || '(no address injected)')}</div>`
-      : `<div class="hop svc">
-           <div class="who"><span class="dot"></span>from greeting-service</div>
+      ? `<div class="card-out err">
+           <div class="msg">We couldn't fetch your greeting.</div>
+           <div class="sub-msg">${esc(d.error)}</div>
+         </div>`
+      : `<div class="card-out">
            <div class="msg">${esc(d.greeting)}</div>
-         </div>
-         <div class="hop">
-           <div class="who"><span class="dot"></span>from web-ui</div>
-           <div class="msg">${esc(d.flourish)}</div>
-         </div>
-         <div class="meta">${esc(d.upstream)} · ${d.elapsedMs} ms</div>`;
+           <div class="sub-msg">${esc(d.flourish)}</div>
+         </div>`;
   } catch (err) {
-    out.innerHTML = `<div class="hop err"><div class="who"><span class="dot"></span>web-ui</div><div class="msg">${esc(String(err))}</div></div>`;
+    out.innerHTML = `<div class="card-out err"><div class="msg">Something went wrong.</div><div class="sub-msg">${esc(String(err))}</div></div>`;
   } finally {
     out.classList.add('show');
     go.disabled = false; go.textContent = 'Say hi';

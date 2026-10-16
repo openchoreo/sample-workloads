@@ -1,8 +1,9 @@
 # webapp-go-greeter (`web-ui`)
 
 A small Go web application for OpenChoreo Course 2. It serves a page with a name
-field; submitting it calls `greeting-service` and shows which service produced
-which half of the answer.
+field; submitting it calls `greeting-service` and shows the greeting that comes
+back. The page itself stays free of addresses, service names and timings; those
+are in the JSON response and the logs.
 
     browser  ->  web-ui (this app)  ->  greeting-service
 
