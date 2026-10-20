@@ -1,0 +1,49 @@
+# OpenChoreo Workload Descriptor
+# This file defines how your workload exposes endpoints and connects to other services.
+# It sits alongside your source code and gets converted to a Workload Custom Resource (CR).
+apiVersion: openchoreo.dev/v1alpha1
+
+# Basic metadata for the workload
+metadata:
+  # +required Name of the workload
+  name: go-greeter-webapp
+
+# +optional Incoming connection details for the component
+# Endpoints define the network interfaces that this workload exposes to other services
+endpoints:
+  - # +required Unique name for the endpoint
+    # This name will be used when generating the managed API and as the key in the CR map
+    name: webapp-endpoint
+    # +optional Visibility of the endpoint
+    # Allowed values: project, namespace, internal, external
+    visibility:
+      - external
+    # +required Numeric port value that gets exposed via the endpoint
+    port: 8080
+    # +required Type of traffic that the endpoint is accepting
+    # Allowed values: GraphQL, gRPC, TCP, UDP, HTTP, Websocket
+    type: HTTP
+
+# +optional Outgoing connection details for the component
+#
+# This webapp calls the go-greeter service. It does not hardcode an address for
+# it; it reads GREETING_SERVICE_URL, which OpenChoreo resolves per environment
+# from a declared dependency.
+#
+# The dependency is left commented out on purpose. Declaring it is the exercise
+# in the OpenChoreo course lesson on connecting components, and it can also be
+# added from the portal's Dependencies tab. Until it is declared, the page still
+# loads and the greeting fails with a readable error.
+#
+# dependencies:
+#   endpoints:
+#     - # +required The component that provides the endpoint
+#       component: greeting-service
+#       # +required The name of the endpoint on that component
+#       name: greeter-api
+#       # +required The scope at which the endpoint is consumed
+#       # Allowed values: project, namespace
+#       visibility: project
+#       # +required Where to put the resolved connection details
+#       envBindings:
+#         address: GREETING_SERVICE_URL

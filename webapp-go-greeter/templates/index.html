@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Greeter — OpenChoreo sample</title>
+<style>
+  :root{
+    --bg:#0f1420; --panel:#161d2d; --panel-2:#1d2639; --line:#2a3447;
+    --text:#e8ecf4; --muted:#93a0b8; --accent:#7c8cff; --accent-2:#4ade80;
+    --danger:#f87171;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; min-height:100vh; display:flex; align-items:center; justify-content:center;
+    background:radial-gradient(1200px 600px at 50% -10%,#1b2540 0%,var(--bg) 60%);
+    color:var(--text); font:16px/1.55 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    padding:24px;
+  }
+  .card{
+    width:100%; max-width:560px; background:var(--panel); border:1px solid var(--line);
+    border-radius:16px; padding:32px; box-shadow:0 24px 60px rgba(0,0,0,.45);
+  }
+  h1{margin:0 0 4px; font-size:26px; letter-spacing:-.02em}
+  .sub{margin:0 0 26px; color:var(--muted); font-size:14px}
+  label{display:block; font-size:13px; color:var(--muted); margin-bottom:8px}
+  .row{display:flex; gap:10px}
+  input{
+    flex:1; padding:13px 15px; border-radius:10px; border:1px solid var(--line);
+    background:var(--panel-2); color:var(--text); font-size:15px; outline:none;
+  }
+  input:focus{border-color:var(--accent); box-shadow:0 0 0 3px rgba(124,140,255,.18)}
+  button{
+    padding:13px 22px; border-radius:10px; border:0; cursor:pointer;
+    background:var(--accent); color:#0b1020; font-size:15px; font-weight:650;
+  }
+  button:hover{filter:brightness(1.08)}
+  button:disabled{opacity:.55; cursor:default; filter:none}
+  .out{margin-top:26px; display:none}
+  .out.show{display:block}
+  .card-out{
+    border:1px solid var(--line); border-radius:12px; padding:22px 20px;
+    background:var(--panel-2); text-align:center;
+  }
+  .msg{font-size:26px; font-weight:650; letter-spacing:-.01em}
+  .sub-msg{margin-top:10px; font-size:15px; color:var(--muted)}
+  .err{border-color:rgba(248,113,113,.5); text-align:left}
+  .err .msg{color:var(--danger); font-size:16px; font-weight:600}
+  .err .sub-msg{margin-top:8px}
+</style>
+</head>
+<body>
+  <main class="card">
+    <h1>Say hi</h1>
+    <p class="sub">Welcome. Tell us your name and we’ll say hello.</p>
+
+    <form id="f" autocomplete="off">
+      <label for="name">Your name</label>
+      <div class="row">
+        <input id="name" name="name" placeholder="OpenChoreo" required>
+        <button id="go" type="submit">Say hi</button>
+      </div>
+    </form>
+
+    <section class="out" id="out" aria-live="polite"></section>
+  </main>
+
+<script>
+const f = document.getElementById('f');
+const out = document.getElementById('out');
+const go = document.getElementById('go');
+
+f.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const name = document.getElementById('name').value.trim() || 'there';
+  go.disabled = true; go.textContent = 'Saying hi…';
+  try {
+    const r = await fetch('/api/greet?name=' + encodeURIComponent(name));
+    const d = await r.json();
+    out.innerHTML = d.error
+      ? `<div class="card-out err">
+           <div class="msg">We couldn't fetch your greeting.</div>
+           <div class="sub-msg">${esc(d.error)}</div>
+         </div>`
+      : `<div class="card-out">
+           <div class="msg">${esc(d.greeting)}</div>
+           <div class="sub-msg">${esc(d.flourish)}</div>
+         </div>`;
+  } catch (err) {
+    out.innerHTML = `<div class="card-out err"><div class="msg">Something went wrong.</div><div class="sub-msg">${esc(String(err))}</div></div>`;
+  } finally {
+    out.classList.add('show');
+    go.disabled = false; go.textContent = 'Say hi';
+  }
+});
+
+function esc(s){ const d = document.createElement('div'); d.textContent = s ?? ''; return d.innerHTML; }
+</script>
+</body>
+</html>
