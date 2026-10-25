@@ -50,6 +50,19 @@ GET /greeter/greet
 Hello, Stranger!
 ```
 
+### Version
+
+Report the version of the running build. The startup log, the log line of each greeting or version request, and exported traces carry the same version.
+
+**Endpoint:** `GET /greeter/version`
+
+**Response:**
+```
+v1.0
+```
+
+The `release-lines-next` branch builds `v1.1`. It backs the [OpenChoreo release lines sample](https://github.com/openchoreo/openchoreo/tree/main/samples/release-lines), which runs both versions of this service side by side.
+
 ## Project Structure
 
 ```
@@ -88,4 +101,7 @@ curl "http://localhost:9090/greeter/greet?name=Alice"
 
 # Test without a name
 curl "http://localhost:9090/greeter/greet"
+
+# Get the version
+curl "http://localhost:9090/greeter/version"
 ```

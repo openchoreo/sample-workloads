@@ -6,7 +6,8 @@
 // Besides the greeting itself it exposes liveness and readiness endpoints for
 // health probes, writes JSON logs carrying the trace and span id of the request
 // that produced them, and exports OpenTelemetry traces. A caller that
-// propagates trace context therefore shares one trace with this service.
+// propagates trace context therefore shares one trace with this service. It
+// reports its version, so builds of different branches can be told apart.
 package main
 
 import (
@@ -30,6 +31,10 @@ import (
 	"go.opentelemetry.io/otel/trace"
 )
 
+// version identifies this build. The release-lines-next branch, which backs the
+// OpenChoreo release lines sample, sets it to v1.1.
+const version = "v1.0"
+
 var logger *slog.Logger
 
 func main() {
@@ -44,6 +49,7 @@ func main() {
 
 	serverMux := http.NewServeMux()
 	serverMux.HandleFunc("/greeter/greet", greet)
+	serverMux.HandleFunc("/greeter/version", reportVersion)
 	// Liveness: is the process up. It must not depend on anything else, or a
 	// dependency's outage would restart healthy replicas.
 	serverMux.HandleFunc("/healthz", health("ok"))
@@ -59,7 +65,7 @@ func main() {
 	}
 
 	go func() {
-		logger.Info("starting HTTP greeter", "port", serverPort)
+		logger.Info("starting HTTP greeter", "port", serverPort, "version", version)
 		if err := server.ListenAndServe(); !errors.Is(err, http.ErrServerClosed) {
 			logger.Error("HTTP ListenAndServe", "err", err)
 			os.Exit(1)
@@ -101,6 +107,16 @@ func greet(w http.ResponseWriter, r *http.Request) {
 		"name_defaulted", defaulted,
 		"elapsed_ms", time.Since(started).Milliseconds(),
 		"remote", r.RemoteAddr,
+		"version", version,
+	)
+}
+
+func reportVersion(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintln(w, version)
+
+	logFor(r.Context()).Info("reported version",
+		"remote", r.RemoteAddr,
+		"version", version,
 	)
 }
 
@@ -139,6 +155,7 @@ func initTracing(ctx context.Context) func() {
 		sdktrace.WithBatcher(exp),
 		sdktrace.WithResource(resource.NewWithAttributes("",
 			attribute.String("service.name", env("OTEL_SERVICE_NAME", "go-greeter")),
+			attribute.String("service.version", version),
 		)),
 	)
 	otel.SetTracerProvider(tp)
