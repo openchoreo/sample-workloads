@@ -25,3 +25,18 @@ paths:
                 type: string
       deprecated: false
       security: []
+  /greeter/version:
+    get:
+      summary: Get the service version
+      description: Version of the running build, such as v1.0
+      tags:
+        - greeting
+      responses:
+        '200':
+          description: Successful response
+          content:
+            text/plain:
+              schema:
+                type: string
+      deprecated: false
+      security: []
