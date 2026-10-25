@@ -33,7 +33,7 @@ import (
 
 // version identifies this build. The release-lines-next branch, which backs the
 // OpenChoreo release lines sample, sets it to v1.1.
-const version = "v1.0"
+const version = "v1.1"
 
 var logger *slog.Logger
 
